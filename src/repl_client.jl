@@ -288,6 +288,6 @@ function start_local_server(port::Integer, file::AbstractString)
 end
 
 function start_remote_server(host, port, file)
-    cmd = `julia --load $file`
+    cmd = `tmux new-session -d -s "juliarepl1" julia -L $file`
     run(cmd)
 end
