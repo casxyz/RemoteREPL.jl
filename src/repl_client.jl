@@ -287,7 +287,7 @@ function start_local_server(port::Integer, file::AbstractString)
     start_remote_server(hist,port, file)
 end
 
-function start_remote_server(host, port, file)
-    cmd = `tmux new-session -d -s "juliarepl1" julia -L $file`
+function start_remote_server(host, port, file, tmux_ses_name = "juliarepl1")
+    cmd = `tmux new-session -d -s $tmux_ses_name julia -L $file`
     run(cmd)
 end
