@@ -273,3 +273,21 @@ end
 function remote_eval(cmdstr::AbstractString)
     remote_eval(Sockets.localhost, 27754, cmdstr)
 end
+
+"""
+   start_local_server(port)
+   start_local_server(port, file)
+   start_remote_server(host, port)
+   start_remote_server(host, port, file)
+
+start a remote server process that starts with RemoteREPL loaded,
+"""
+function start_local_server(port::Integer, file::AbstractString)
+    host = Sockets.localhost
+    start_remote_server(hist,port, file)
+end
+
+function start_remote_server(host, port, file)
+    cmd = `julia --load $file`
+    run(cmd)
+end
