@@ -282,12 +282,20 @@ end
 
 start a remote server process that starts with RemoteREPL loaded,
 """
-function start_local_server(port::Integer, file::AbstractString)
-    host = Sockets.localhost
-    start_remote_server(hist,port, file)
-end
 
-function start_remote_server(host, port, file, tmux_ses_name = "juliarepl1")
-    cmd = `tmux new-session -d -s $tmux_ses_name julia -L $file`
+function add_tmux_repl(host, port::Integer,
+                       tmux_ses_name::AbstractString = "jlREPL", new_session = true)
+    eval_expression = "using RemoteREPL;@async serve_repl($port)"
+    new_str = new_session ? "new-session -d -s" : "new-window -t"
+    cmd = `tmux $new_str $tmux_ses_name julia -i -e "$eval_expression"`
     run(cmd)
 end
+
+function tmux_repls(host, ports::Vector{<:Integer},
+                    tmux_ses_name::AbstractString = "jlREPL")
+  start_tmux_repl(host, ports[1], tmux_ses_name, new_session = true)
+  for p = ports[2:end]
+    add_tmux_repl(host, p, tmux_ses_name, new_session = false)
+  end
+end
+
